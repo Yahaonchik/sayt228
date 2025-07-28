@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Rive, Layout, Fit, Alignment } from '@rive-app/canvas';
+import { useState } from 'react';
+import SimpleRive from '../components/SimpleRive';
 
 interface ProblemData {
   title: string;
@@ -9,9 +9,6 @@ interface ProblemData {
 }
 
 export default function Index() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const riveInstanceRef = useRef<Rive | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [activeModal, setActiveModal] = useState<number | null>(null);
 
   const problemsData: Record<number, ProblemData> = {
@@ -44,99 +41,7 @@ export default function Index() {
     setActiveModal(null);
   };
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
 
-    console.log('🍕 Initializing Rive...');
-
-    const riveFileUrl = '/untitled.riv';
-
-    const riveInstance = new Rive({
-      src: riveFileUrl,
-      canvas: canvasRef.current,
-      layout: new Layout({
-        fit: Fit.Contain,
-        alignment: Alignment.Center,
-      }),
-      autoplay: true,
-      onLoad: () => {
-        console.log('🇮🇹 Rive loaded - ready for interaction!');
-        setDebugInfo(prev => [...prev, 'Rive loaded - interactive']);
-      },
-      onLoadError: (error) => {
-        console.error('❌ Rive error:', error);
-        setDebugInfo(prev => [...prev, `Error: ${error}`]);
-      },
-    });
-
-    riveInstanceRef.current = riveInstance;
-
-    // STATE CHANGE DEBUGGING WITH MODAL TRIGGERS
-    riveInstance.on('statechange', (event) => {
-      console.log('🔄 FULL STATE CHANGE EVENT:', {
-        event,
-        type: typeof event,
-        keys: Object.keys(event || {}),
-        data: event
-      });
-
-      if (event && typeof event === 'object') {
-        for (const [key, value] of Object.entries(event)) {
-          console.log(`📋 ${key}:`, value);
-        }
-      }
-
-      setDebugInfo(prev => [...prev.slice(-15), `StateChange: ${JSON.stringify(event)}`]);
-
-      // Check for Timeline 5, 6, 7 events and trigger modals
-      if (event && typeof event === 'object') {
-        const eventName = String(event.name || event.stateName || '');
-        const eventData = event.data || [];
-
-        console.log('🔍 Event name:', eventName);
-        console.log('🔍 Event data:', eventData);
-
-        // Check for timeline events or unknown states
-        if (eventName.includes('Timeline 2')) {
-          console.log('🚪 Timeline 2 triggered - Opening door problem!');
-          openProblemOverlay(1);
-        } else if (eventName.includes('Timeline 3')) {
-          console.log('💧 Timeline 3 triggered - Opening water problem!');
-          openProblemOverlay(2);
-        } else if (eventName.includes('Timeline 4')) {
-          console.log('⚡ Timeline 4 triggered - Opening electricity problem!');
-          openProblemOverlay(3);
-        } else if (eventName.includes('Timeline 5') || eventData.includes('unknown')) {
-          console.log('🔧 Timeline 5 triggered - Opening problem 4!');
-          openProblemOverlay(1);
-        } else if (eventName.includes('Timeline 6') || eventData.includes('unknown2')) {
-          console.log('🔧 Timeline 6 triggered - Opening problem 5!');
-          openProblemOverlay(2);
-        } else if (eventName.includes('Timeline 7') || eventData.includes('unknown3')) {
-          console.log('🔧 Timeline 7 triggered - Opening problem 6!');
-          openProblemOverlay(3);
-        }
-
-        // Also check for direct trigger names
-        if (eventName.includes('trigger_1')) {
-          openProblemOverlay(1);
-        } else if (eventName.includes('trigger_2')) {
-          openProblemOverlay(2);
-        } else if (eventName.includes('trigger_3')) {
-          openProblemOverlay(3);
-        }
-      }
-    });
-
-    // Rive handles mouse interaction internally - no manual event handling needed
-    console.log('🎮 Rive animation ready - interactive elements should work automatically');
-
-    return () => {
-      if (riveInstanceRef.current) {
-        riveInstanceRef.current.cleanup();
-      }
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -181,20 +86,9 @@ export default function Index() {
         </div>
       </div>
 
-      {/* CLEAN RIVE FILE - 3X SIZE */}
-      <div className="flex justify-center mt-16">
-        <canvas
-          ref={canvasRef}
-          width={1600}
-          height={1600}
-          style={{
-            width: '240vw',
-            maxWidth: '2400px',
-            height: '240vw',
-            maxHeight: '2400px',
-            cursor: 'pointer'
-          }}
-        />
+      {/* RIVE COMPONENT */}
+      <div className="mt-8 flex justify-center">
+        <SimpleRive />
       </div>
 
       {/* MODAL OVERLAY */}
