@@ -28,8 +28,8 @@ export default function RiveInteractive() {
 
     console.log('🍕 Initializing Rive application...');
     
-    // Use the provided Rive file URL
-    const riveFileUrl = 'https://cdn.builder.io/o/assets%2F44fc5594513c45f09bca42145600622d%2F311df0dbc1a54f2c9bb8de4eac932faa?alt=media&token=cb5f26de-4846-420f-8484-3f8638cf3ea4&apiKey=44fc5594513c45f09bca42145600622d';
+    // Use the local Rive file
+    const riveFileUrl = '/untitled.riv';
     
     const riveInstance = new Rive({
       src: riveFileUrl,
