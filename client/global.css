@@ -76,6 +76,97 @@
   }
 }
 
+/* Rive Interactive Styles */
+.rive-container {
+  font-family: 'Georgia', serif;
+}
+
+/* Spring animation for overlays */
+@keyframes spring {
+  0% {
+    transform: scale(0.3) rotate(-5deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.spring-animation {
+  animation: spring 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Mobile-responsive canvas */
+.rive-canvas {
+  width: 60vw;
+  max-width: 600px;
+  height: 60vw;
+  max-height: 600px;
+}
+
+/* Touch-friendly buttons */
+.touch-button {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile breakpoints */
+@media (max-width: 768px) {
+  .rive-canvas {
+    width: 95vw !important;
+    height: 95vw !important;
+    max-width: 400px !important;
+    max-height: 400px !important;
+  }
+
+  .mobile-overlay {
+    left: 8px !important;
+    right: 8px !important;
+    top: 8px !important;
+    width: calc(100% - 16px) !important;
+  }
+
+  .mobile-text {
+    font-size: 0.875rem;
+  }
+
+  .mobile-title {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rive-canvas {
+    width: 98vw !important;
+    height: 98vw !important;
+    max-width: 350px !important;
+    max-height: 350px !important;
+  }
+
+  .mobile-overlay {
+    left: 4px !important;
+    right: 4px !important;
+    top: 4px !important;
+    width: calc(100% - 8px) !important;
+    padding: 12px !important;
+  }
+
+  .mobile-text {
+    font-size: 0.75rem;
+  }
+
+  .mobile-title {
+    font-size: 1rem;
+  }
+}
+
 /* Washing Machine Styles */
 #washer {
     margin: 50px auto;
