@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Rive, Layout, Fit, Alignment } from '@rive-app/canvas';
+import EnhancedModal from './EnhancedModal';
 
 interface ProblemData {
   title: string;
   description: string;
-  solution: string;
   color: string;
 }
 
@@ -17,20 +17,32 @@ export default function SimpleRive() {
     1: {
       title: "🚪 Проблема с дверцей",
       description: "Дверца не открывается или не закрывается",
-      solution: "1. Проверьте блокировку замка\n2. ��бедитесь что цикл стирки завершен\n3. Отключите машину на 10 минут\n4. Проверьте уплотнитель дверцы",
       color: "from-red-500 to-red-700"
     },
     2: {
       title: "💧 Проблема с водой",
       description: "Не набирает воду или не сливает",
-      solution: "1. Проверьте кран подачи воды\n2. Очистите фильтр сливного шланга\n3. Проверьте давление воды\n4. Осмотрите сливной насос",
       color: "from-blue-500 to-blue-700"
     },
     3: {
       title: "⚡ Проблема с отжимом",
       description: "Не отжимает белье или плохо отжимает",
-      solution: "1. Равномерно распределите белье\n2. Проверьте баланс машины\n3. Очистите фильтр\n4. Уменьшите загрузку",
       color: "from-green-500 to-green-700"
+    },
+    4: {
+      title: "🔇 Проблема с шумом",
+      description: "Машина издает странные звуки",
+      color: "from-purple-500 to-purple-700"
+    },
+    5: {
+      title: "🌡️ Проблема с нагревом",
+      description: "Вода не нагревается или перегревается",
+      color: "from-orange-500 to-orange-700"
+    },
+    6: {
+      title: "⏰ Проблема с программами",
+      description: "Программы не запускаются или зависают",
+      color: "from-indigo-500 to-indigo-700"
     }
   };
 
@@ -154,10 +166,19 @@ export default function SimpleRive() {
           } else if (str === 'Timeline 24') {
             console.log('⚡ Timeline 24 - Opening problem 3!');
             openProblemOverlay(3);
-          } else if (str.match(/Timeline (2[5-9]|30)/)) {
-            // Timeline 25-30 для дополнительных проблем если нужно
+          } else if (str === 'Timeline 25') {
+            console.log('🔇 Timeline 25 - Opening problem 4!');
+            openProblemOverlay(4);
+          } else if (str === 'Timeline 26') {
+            console.log('🌡️ Timeline 26 - Opening problem 5!');
+            openProblemOverlay(5);
+          } else if (str === 'Timeline 27') {
+            console.log('⏰ Timeline 27 - Opening problem 6!');
+            openProblemOverlay(6);
+          } else if (str.match(/Timeline (2[8-9]|30)/)) {
+            // Timeline 28-30 для будущих дополнительных проблем
             const timelineNum = str.match(/Timeline (\d+)/)?.[1];
-            console.log(`📊 Timeline ${timelineNum} - Additional problem`);
+            console.log(`📊 Timeline ${timelineNum} - Reserved for future problems`);
           } else {
             console.log('📊 Other Timeline (ignored):', str);
           }
@@ -167,7 +188,7 @@ export default function SimpleRive() {
       console.log('🚨 ===== RIVE STATECHANGE EVENT END =====');
     });
 
-    // Обработка движения мыши
+    // Handle mouse movement for Rive interactivity
     const handleMouseMove = (event: MouseEvent) => {
       if (!canvasRef.current || !riveInstanceRef.current) return;
 
@@ -209,6 +230,7 @@ export default function SimpleRive() {
     <>
       <canvas
         ref={canvasRef}
+        className="rive-canvas"
         style={{
           width: '750px',
           height: '750px',
@@ -217,34 +239,14 @@ export default function SimpleRive() {
         height={1500}
       />
 
-      {/* MODAL OVERLAY */}
+      {/* ENHANCED MODAL */}
       {activeModal && problemsData[activeModal] && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
-          <div
-            className={`bg-gradient-to-br ${problemsData[activeModal].color} text-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 transform transition-all duration-300 scale-100`}
-            onClick={(e) => e.stopPropagation()}
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
-            <h2 className="text-3xl font-bold mb-4">
-              {problemsData[activeModal].title}
-            </h2>
-            <p className="text-lg mb-6 opacity-90">
-              {problemsData[activeModal].description}
-            </p>
-            <div className="bg-white bg-opacity-20 p-4 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">🔧 Решение:</h3>
-              <pre className="text-base leading-relaxed whitespace-pre-wrap">
-                {problemsData[activeModal].solution}
-              </pre>
-            </div>
-            <p className="text-center mt-6 text-sm opacity-75">
-              👆 Кликните на затемненную об��асть чтобы закрыть
-            </p>
-          </div>
-        </div>
+        <EnhancedModal
+          isOpen={!!activeModal}
+          onClose={closeModal}
+          problemData={problemsData[activeModal]}
+          problemId={activeModal}
+        />
       )}
     </>
   );
